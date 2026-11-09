@@ -1,6 +1,6 @@
 {
   "name": "vulnerable-test-dependency",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "TEST ONLY: intentionally insecure library code for validating SAST/SCA security scanners. DO NOT USE IN PRODUCTION.",
   "keywords": [
     "security-testing",
