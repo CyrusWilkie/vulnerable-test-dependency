@@ -51,6 +51,8 @@ exports.buildFunction = buildFunction;
 exports.parseConfig = parseConfig;
 exports.pingHost = pingHost;
 exports.listDirectory = listDirectory;
+exports.runCommand = runCommand;
+exports.getNodeInfo = getNodeInfo;
 exports.readUserFile = readUserFile;
 exports.readTemplate = readTemplate;
 exports.saveUpload = saveUpload;
@@ -96,6 +98,34 @@ function pingHost(host) {
 /** VULNERABLE (CWE-78): user-controlled filename interpolated into a synchronous shell command. */
 function listDirectory(dir) {
     return (0, child_process_1.execSync)(`ls -la ${dir}`).toString();
+}
+// The two functions below use execFile (no shell), so they also work in
+// shell-less / distroless containers where exec()/execSync() fail with ENOENT.
+/** Promise wrapper around execFile. Not itself vulnerable; the callers below are. */
+function execFileAsync(file, args) {
+    return new Promise((resolve, reject) => {
+        (0, child_process_1.execFile)(file, args, (err, stdout) => {
+            if (err)
+                return reject(err);
+            resolve(stdout);
+        });
+    });
+}
+/**
+ * VULNERABLE (CWE-78): caller controls both the executable and its arguments.
+ * No shell is involved, but any binary present in the container can be run.
+ */
+function runCommand(command, args = []) {
+    return execFileAsync(command, args);
+}
+/**
+ * VULNERABLE (CWE-88, argument injection): meant to report Node runtime info
+ * (e.g. "--version"), but a caller-supplied option goes straight onto the
+ * node command line. Passing "--eval=<code>" runs arbitrary JavaScript. The
+ * node binary is always present, so this is exploitable even on distroless.
+ */
+function getNodeInfo(flag) {
+    return execFileAsync(process.execPath, [flag]);
 }
 // ---------------------------------------------------------------------------
 // 3. Path traversal  (CWE-22)

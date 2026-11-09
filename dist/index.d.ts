@@ -21,6 +21,18 @@ export declare function parseConfig(raw: string): unknown;
 export declare function pingHost(host: string): Promise<string>;
 /** VULNERABLE (CWE-78): user-controlled filename interpolated into a synchronous shell command. */
 export declare function listDirectory(dir: string): string;
+/**
+ * VULNERABLE (CWE-78): caller controls both the executable and its arguments.
+ * No shell is involved, but any binary present in the container can be run.
+ */
+export declare function runCommand(command: string, args?: string[]): Promise<string>;
+/**
+ * VULNERABLE (CWE-88, argument injection): meant to report Node runtime info
+ * (e.g. "--version"), but a caller-supplied option goes straight onto the
+ * node command line. Passing "--eval=<code>" runs arbitrary JavaScript. The
+ * node binary is always present, so this is exploitable even on distroless.
+ */
+export declare function getNodeInfo(flag: string): Promise<string>;
 /** VULNERABLE (CWE-22): joins user input onto a base dir with no normalization/containment check. */
 export declare function readUserFile(filename: string, baseDir?: string): string;
 /** VULNERABLE (CWE-22): string-concatenated path built from user input. */

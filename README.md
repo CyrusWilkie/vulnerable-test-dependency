@@ -18,6 +18,8 @@ they should.
 | `buildFunction` | `new Function()` on input | CWE-95 |
 | `pingHost` | `exec()` with concatenated input | CWE-78 |
 | `listDirectory` | `execSync()` with interpolated input | CWE-78 |
+| `runCommand` | `execFile()` with caller-controlled executable and args (no shell) | CWE-78 |
+| `getNodeInfo` | `execFile(process.execPath, [flag])`, so `--eval=` gives code execution (no shell) | CWE-88 |
 | `readUserFile`, `readTemplate` | Unchecked path join / concat on read | CWE-22 |
 | `saveUpload` | Unchecked path on write | CWE-22 / CWE-73 |
 | `buildUserLookupQuery`, `findUserByName`, `authenticate` | String-concatenated SQL | CWE-89 |
